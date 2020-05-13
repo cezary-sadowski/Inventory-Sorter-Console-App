@@ -5,14 +5,15 @@ using System.Threading;
 
 namespace Inventory_Sorter
 {
-    public class InventoryData
+    public class WarehouseData
     {
-        public InventoryData(string warehouse, int totalMaterialAmount)
+        public WarehouseData(string warehouse, int totalMaterialAmount)
         {
             Warehouse = warehouse;
             TotalMaterialAmount = totalMaterialAmount;
         }
         public string Warehouse { get; set; }
         public int TotalMaterialAmount { get; set; }
+        public Material Material { get; set; }
     }
 }

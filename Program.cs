@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Inventory_Sorter
 {
@@ -12,15 +13,40 @@ namespace Inventory_Sorter
             var materialInventoryData = File.ReadAllLines(@"C:\Users\Czarek\source\repos\Inventory Sorter\Data\InputData.txt");
             var materialDataWithNoHashLines = DeleteIgnoredLines(materialInventoryData);
             var materials = new List<Material>();
-            var warehouses = new List<InventoryData>();
+            var warehouses = new List<WarehouseData>();
             
 
             foreach (var materialData in materialDataWithNoHashLines)
             {
                 string[] cuttedData = materialData.Split(new char[] { ';', '|'});
                 Dictionary<string, int> amountPerWarehouse = GetMaterialAmountPerWarehouse(cuttedData);
-                var material = new Material(cuttedData[0], amountPerWarehouse);
+                var material = new Material(cuttedData[1], amountPerWarehouse);
                 materials.Add(material);
+            }
+
+            foreach (var m in materials)
+            {
+                foreach (var w in m.AmountPerWarehouse)
+                {
+                    var warehouse = new WarehouseData(w.Key, w.Value);
+                    warehouse.Material = m;
+
+                    warehouses.Add(warehouse);
+                }
+                
+            }
+
+            var final = warehouses.GroupBy(w => w.Warehouse);
+
+            foreach(var l in final)
+            {
+                Console.WriteLine(l.Key);
+
+                foreach (var p in l)
+                {
+                    Console.WriteLine($"{p.Material.MaterialId}: {p.TotalMaterialAmount}");
+                }
+                
             }
 
             Console.ReadLine();
