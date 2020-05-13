@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Inventory_Sorter
 {
@@ -36,16 +35,22 @@ namespace Inventory_Sorter
                 
             }
 
-            var final = warehouses.GroupBy(w => w.Warehouse);
+            var grouppedWarehouses = warehouses.GroupBy(w => w.Warehouse);
 
-            foreach(var l in final)
+            foreach(var l in grouppedWarehouses)
             {
-                Console.WriteLine(l.Key);
+                var total = 0;
+                foreach (var x in l)
+                {
+                    total += x.TotalMaterialAmount;
+                }
+                Console.WriteLine($"{l.Key} (total {total})");
 
                 foreach (var p in l)
                 {
                     Console.WriteLine($"{p.Material.MaterialId}: {p.TotalMaterialAmount}");
                 }
+                Console.WriteLine();
                 
             }
 
