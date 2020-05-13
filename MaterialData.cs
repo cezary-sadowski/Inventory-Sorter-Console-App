@@ -6,12 +6,12 @@ namespace Inventory_Sorter
 {
     public class Material
     {
-        public Material(string materialId, int materialAmount)
+        public Material(string materialId, Dictionary<string, int> amountPerWarehouse)
         {
             MaterialId = materialId;
-            MaterialAmount = materialAmount;
+            AmountPerWarehouse = amountPerWarehouse;
         }
         public string MaterialId { get; set; }
-        public int MaterialAmount { get; set; }
+        public Dictionary<string, int> AmountPerWarehouse { get; set; }
     }
 }

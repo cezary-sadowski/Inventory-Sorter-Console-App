@@ -17,10 +17,9 @@ namespace Inventory_Sorter
 
             foreach (var materialData in materialDataWithNoHashLines)
             {
-                string[] cuttedData = materialData.Split(new char[] { ';', '|', ','});
-                int totalAmount = GetTotalMaterialAmount(cuttedData);
-
-                var material = new Material(cuttedData[1], totalAmount);
+                string[] cuttedData = materialData.Split(new char[] { ';', '|'});
+                Dictionary<string, int> amountPerWarehouse = GetMaterialAmountPerWarehouse(cuttedData);
+                var material = new Material(cuttedData[0], amountPerWarehouse);
                 materials.Add(material);
             }
 
@@ -36,18 +35,17 @@ namespace Inventory_Sorter
             return formattedData;
         }
 
-        static int GetTotalMaterialAmount(string[] data)
+        static Dictionary<string, int> GetMaterialAmountPerWarehouse(string[] data)
         {
-            int totalAmount = 0;
-            foreach (var d in data)
+            var dataList = data.ToList().Skip(2);
+            var amountPerWarehouse = new Dictionary<string, int>();
+            
+            foreach (var d in dataList)
             {
-                int amount;
-                if (int.TryParse(d, out amount))
-                {
-                    totalAmount += amount;
-                }
+                var cuttedData = d.Split(',');
+                amountPerWarehouse.Add(cuttedData[0], int.Parse(cuttedData[1]));
             }
-            return totalAmount;
+            return amountPerWarehouse;
         }
             
     }
