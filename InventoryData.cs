@@ -16,15 +16,4 @@ namespace Inventory_Sorter
         public int TotalMaterialAmount { get; set; }
         public Material Material { get; set; }
     }
-
-    public class Material
-    {
-        public Material(string materialId, int materialAmount)
-        {
-            MaterialId = materialId;
-            MaterialAmount = materialAmount;
-        }
-        public string MaterialId { get; set; }
-        public int MaterialAmount { get; set; }
-    }
 }
