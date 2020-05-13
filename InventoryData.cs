@@ -14,6 +14,5 @@ namespace Inventory_Sorter
         }
         public string Warehouse { get; set; }
         public int TotalMaterialAmount { get; set; }
-        public Material Material { get; set; }
     }
 }
