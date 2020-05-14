@@ -9,7 +9,8 @@ namespace Inventory_Sorter
     {
         static void Main(string[] args)
         {
-            var materialInventoryData = File.ReadAllLines(@"C:\Users\Czarek\source\repos\Inventory Sorter\Data\InputData.txt");
+            var pathToSourceData = Path.Combine(Directory.GetCurrentDirectory(), "Data", "InputData.txt");
+            var materialInventoryData = File.ReadAllLines(pathToSourceData);
             var materialDataWithNoHashLines = DeleteIgnoredLines(materialInventoryData);
             var materials = GetListOfMaterials(materialDataWithNoHashLines);
             var warehouses = GetListOfWarehousesWithMaterials(materials);
