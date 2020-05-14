@@ -36,19 +36,35 @@ namespace Inventory_Sorter
             }
 
             var grouppedWarehouses = warehouses.GroupBy(w => w.Warehouse);
+            var warehouseWithTotal = new Dictionary<string, int>();
 
-            foreach(var l in grouppedWarehouses)
+            foreach (var l in grouppedWarehouses)
             {
                 var total = 0;
-                foreach (var x in l)
+                foreach (var data in l)
                 {
-                    total += x.TotalMaterialAmount;
-                }
-                Console.WriteLine($"{l.Key} (total {total})");
+                    total += data.TotalMaterialAmount;
 
-                foreach (var p in l)
+                }
+                warehouseWithTotal.Add(l.Key, total);
+
+            }
+            var sortedWarehouse = warehouseWithTotal
+                .OrderByDescending(s => s.Value)
+                .ThenByDescending(s => s.Key);
+
+            foreach(var s in sortedWarehouse)
+            {
+                Console.WriteLine($"{s.Key} (total {s.Value})");
+
+                var currentWarehouse = grouppedWarehouses.Where(c => c.Key.Equals(s.Key));
+                foreach(var c in currentWarehouse)
                 {
-                    Console.WriteLine($"{p.Material.MaterialId}: {p.TotalMaterialAmount}");
+                    var tmp = c.OrderBy(t => t.Material.MaterialId);
+                    foreach(var kk in tmp)
+                    {
+                        Console.WriteLine($"{kk.Material.MaterialId}: {kk.TotalMaterialAmount}");
+                    }
                 }
                 Console.WriteLine();
                 
