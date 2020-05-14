@@ -11,44 +11,17 @@ namespace Inventory_Sorter
         {
             var materialInventoryData = File.ReadAllLines(@"C:\Users\Czarek\source\repos\Inventory Sorter\Data\InputData.txt");
             var materialDataWithNoHashLines = DeleteIgnoredLines(materialInventoryData);
-            var materials = new List<Material>();
-            var warehouses = new List<WarehouseData>();
-            
-
-            foreach (var materialData in materialDataWithNoHashLines)
-            {
-                string[] cuttedData = materialData.Split(new char[] { ';', '|'});
-                Dictionary<string, int> amountPerWarehouse = GetMaterialAmountPerWarehouse(cuttedData);
-                var material = new Material(cuttedData[1], amountPerWarehouse);
-                materials.Add(material);
-            }
-
-            foreach (var m in materials)
-            {
-                foreach (var w in m.AmountPerWarehouse)
-                {
-                    var warehouse = new WarehouseData(w.Key, w.Value);
-                    warehouse.Material = m;
-
-                    warehouses.Add(warehouse);
-                }
-                
-            }
-
+            var materials = GetListOfMaterials(materialDataWithNoHashLines);
+            var warehouses = GetListOfWarehousesWithMaterials(materials);
             var grouppedWarehouses = warehouses.GroupBy(w => w.Warehouse);
-            var warehouseWithTotal = new Dictionary<string, int>();
+            var warehouseWithTotal = GetWarehousesWithTotalAmount(grouppedWarehouses);
+            SortAndLogDataToConsole(warehouseWithTotal, grouppedWarehouses);
+            Console.ReadLine();
+        }
 
-            foreach (var l in grouppedWarehouses)
-            {
-                var total = 0;
-                foreach (var data in l)
-                {
-                    total += data.TotalMaterialAmount;
-
-                }
-                warehouseWithTotal.Add(l.Key, total);
-
-            }
+        static void SortAndLogDataToConsole(Dictionary<string, int> warehouseWithTotal,
+            IEnumerable<IGrouping<string, WarehouseData>> grouppedWarehouses)
+        {
             var sortedWarehouse = warehouseWithTotal
                 .OrderByDescending(s => s.Value)
                 .ThenByDescending(s => s.Key);
@@ -67,10 +40,58 @@ namespace Inventory_Sorter
                     }
                 }
                 Console.WriteLine();
-                
+            }
+        }
+
+        static Dictionary<string, int> GetWarehousesWithTotalAmount(IEnumerable<IGrouping<string, WarehouseData>> grouppedWarehouses)
+        {
+            var warehouseWithTotal = new Dictionary<string, int>();
+
+            foreach (var l in grouppedWarehouses)
+            {
+                var total = 0;
+                foreach (var data in l)
+                {
+                    total += data.TotalMaterialAmount;
+                }
+
+                warehouseWithTotal.Add(l.Key, total);
             }
 
-            Console.ReadLine();
+            return warehouseWithTotal;
+        }
+
+        static List<WarehouseData> GetListOfWarehousesWithMaterials(List<Material> materials)
+        {
+            var warehouses = new List<WarehouseData>();
+
+            foreach (var material in materials)
+            {
+                foreach (var amount in material.AmountPerWarehouse)
+                {
+                    var warehouse = new WarehouseData(amount.Key, amount.Value);
+                    warehouse.Material = material;
+
+                    warehouses.Add(warehouse);
+                }
+            }
+
+            return warehouses;
+        }
+
+        static List<Material> GetListOfMaterials(string[] materials)
+        {
+            var materialsList = new List<Material>();
+
+            foreach (var materialData in materials)
+            {
+                string[] cuttedData = materialData.Split(new char[] { ';', '|' });
+                Dictionary<string, int> amountPerWarehouse = GetMaterialAmountPerWarehouse(cuttedData);
+                var material = new Material(cuttedData[1], amountPerWarehouse);
+                materialsList.Add(material);
+            }
+
+            return materialsList;
         }
 
         static string[] DeleteIgnoredLines(string[] inventoryData)
