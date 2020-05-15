@@ -27,17 +27,17 @@ namespace Inventory_Sorter
                 .OrderByDescending(s => s.Value)
                 .ThenByDescending(s => s.Key);
 
-            foreach(var s in sortedWarehouse)
+            foreach(var warehouse in sortedWarehouse)
             {
-                Console.WriteLine($"{s.Key} (total {s.Value})");
+                Console.WriteLine($"{warehouse.Key} (total {warehouse.Value})");
 
-                var currentWarehouse = grouppedWarehouses.Where(c => c.Key.Equals(s.Key));
-                foreach(var c in currentWarehouse)
+                var currentWarehouse = grouppedWarehouses.Where(c => c.Key.Equals(warehouse.Key));
+                foreach(var current in currentWarehouse)
                 {
-                    var tmp = c.OrderBy(t => t.Material.MaterialId);
-                    foreach(var kk in tmp)
+                    var orderedByMaterial = current.OrderBy(t => t.Material.MaterialId);
+                    foreach(var material in orderedByMaterial)
                     {
-                        Console.WriteLine($"{kk.Material.MaterialId}: {kk.TotalMaterialAmount}");
+                        Console.WriteLine($"{material.Material.MaterialId}: {material.TotalMaterialAmount}");
                     }
                 }
                 Console.WriteLine();
@@ -48,15 +48,15 @@ namespace Inventory_Sorter
         {
             var warehouseWithTotal = new Dictionary<string, int>();
 
-            foreach (var l in grouppedWarehouses)
+            foreach (var warehouse in grouppedWarehouses)
             {
                 var total = 0;
-                foreach (var data in l)
+                foreach (var data in warehouse)
                 {
                     total += data.TotalMaterialAmount;
                 }
 
-                warehouseWithTotal.Add(l.Key, total);
+                warehouseWithTotal.Add(warehouse.Key, total);
             }
 
             return warehouseWithTotal;
